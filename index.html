@@ -361,7 +361,7 @@
         <div class="card">
             <div class="card-body p-3 p-md-4">
                 <div class="info-badge">
-                    <i class="fas fa-info-circle"></i> Upload room images → Describe transformation → AI analyzes structure → Generates multiple design variants
+                    <i class="fas fa-info-circle"></i> Upload room images → Describe transformation → AI preserves structure → Edits only surfaces & furnishings
                 </div>
 
                 <div class="upload-options">
@@ -403,8 +403,8 @@
                         <div class="section-title">
                             <i class="fas fa-pencil"></i> Your Transformation Request
                         </div>
-                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Example: Make this bedroom lavish and luxurious with premium furniture and elegant decor"></textarea>
-                        <small class="text-muted">Describe your vision - AI will analyze the room and design accordingly</small>
+                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Example: Make this bedroom luxurious with a king-size bed, velvet headboard, silk curtains, and elegant lighting"></textarea>
+                        <small class="text-muted">Be specific about furniture, colors, materials - AI will preserve room structure and edit design elements</small>
                     </div>
 
                     <div class="mt-3">
@@ -427,8 +427,8 @@
 
                 <div id="loadingSection" style="display: none;" class="text-center my-4">
                     <div class="spinner-border text-primary"></div>
-                    <p class="mt-3 mb-1 fw-bold">AI Architect is analyzing and transforming...</p>
-                    <p class="text-muted" style="font-size: 14px;">This may take 30-90 seconds per image</p>
+                    <p class="mt-3 mb-1 fw-bold">AI is editing your images...</p>
+                    <p class="text-muted" style="font-size: 14px;">Preserving structure, transforming design - 30-60 seconds per image</p>
                 </div>
 
                 <div id="alertContainer" class="mt-3"></div>
@@ -662,7 +662,7 @@
                 console.log('Success response:', data);
 
                 displayResults(data);
-                showAlert('✨ AI Architect completed the transformation!', 'success');
+                showAlert('✨ Images edited successfully with AI!', 'success');
 
             } catch (error) {
                 console.error('Fetch error:', error);
