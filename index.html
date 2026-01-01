@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Room Transformation</title>
+    <title>AI Room Architect</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,7 +17,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 10px;
         }
@@ -78,7 +78,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
             padding: 10px;
         }
@@ -178,29 +178,6 @@
             font-size: 10px;
             font-weight: 600;
         }
-        .model-toggle {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 15px 0;
-        }
-        .toggle-btn {
-            flex: 1;
-            min-width: 140px;
-            padding: 10px 15px;
-            border-radius: 25px;
-            border: 2px solid #667eea;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .toggle-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
         .prompt-tags {
             display: flex;
             flex-wrap: wrap;
@@ -241,39 +218,101 @@
             width: 100%;
             max-width: 400px;
         }
-        .result-grid {
+        .result-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 3px solid #e0e0e0;
+        }
+        .comparison-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .analysis-box {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .analysis-box h6 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .analysis-box p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 0;
+            white-space: pre-wrap;
+        }
+        .image-comparison {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        @media (min-width: 576px) {
-            .result-grid {
-                grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            .image-comparison {
+                grid-template-columns: 1fr 1fr;
             }
         }
-        @media (min-width: 992px) {
-            .result-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        .result-image {
+        .image-box {
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             background: white;
         }
-        .result-image img {
+        .image-box img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .image-label {
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            background: #667eea;
+            color: white;
+        }
+        .variations-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media (min-width: 768px) {
+            .variations-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1200px) {
+            .variations-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .variation-item {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: white;
+        }
+        .variation-item img {
             width: 100%;
             height: 250px;
             object-fit: cover;
         }
-        @media (min-width: 768px) {
-            .result-image img {
-                height: 300px;
-            }
-        }
-        .result-footer {
+        .variation-footer {
             padding: 12px;
             background: #f8f9fa;
             display: flex;
@@ -284,10 +323,6 @@
             width: 3rem;
             height: 3rem;
             border-width: 0.3rem;
-        }
-        .alert {
-            border-radius: 10px;
-            border: none;
         }
         .section-title {
             font-size: 15px;
@@ -310,40 +345,23 @@
             margin-bottom: 15px;
             border-left: 4px solid #1967d2;
         }
-        .original-image-container {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        .original-image-container img {
-            width: 100%;
-            max-height: 300px;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .compare-toggle {
-            background: #34a853;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            cursor: pointer;
+        .capturing {
+            pointer-events: none;
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-magic"></i> AI Room Transformation</h1>
-            <p>Upload your space and transform it with AI</p>
+            <h1><i class="fas fa-building"></i> AI Room Architect</h1>
+            <p>Upload your space and let AI architect transform it</p>
         </div>
 
         <div class="card">
             <div class="card-body p-3 p-md-4">
                 <div class="info-badge">
-                    <i class="fas fa-info-circle"></i> Upload your room/space images and describe how you want to transform them. AI will edit your actual images!
+                    <i class="fas fa-info-circle"></i> Upload room images → Describe transformation → AI analyzes structure → Generates multiple design variants
                 </div>
 
                 <div class="upload-options">
@@ -366,69 +384,51 @@
                 <div id="previewContainer" class="preview-container" style="display: none;"></div>
 
                 <div id="promptSection" style="display: none;">
-                    <div class="mt-4">
-                        <div class="section-title">
-                            <i class="fas fa-robot"></i> Choose AI Model
-                        </div>
-                        <div class="model-toggle">
-                            <button class="toggle-btn active" data-model="imagen4" onclick="selectModel('imagen4')">
-                                <i class="fas fa-image"></i> Imagen 4 Edit
-                            </button>
-                            <button class="toggle-btn" data-model="gemini" onclick="selectModel('gemini')">
-                                <i class="fas fa-brain"></i> Gemini + Imagen
-                            </button>
-                        </div>
-                        <small class="text-muted">
-                            <strong>Imagen 4:</strong> Fast, direct editing | 
-                            <strong>Gemini + Imagen:</strong> Analyzes your image first
-                        </small>
-                    </div>
-
                     <div class="mt-3">
                         <div class="section-title">
                             <i class="fas fa-tags"></i> Quick Transformation Ideas
                         </div>
                         <div class="prompt-tags">
-                            <button class="prompt-tag" onclick="setPrompt('transform to modern minimalist design with clean lines')">Modern Minimalist</button>
-                            <button class="prompt-tag" onclick="setPrompt('luxury hotel bedroom with premium furniture')">Luxury Bedroom</button>
-                            <button class="prompt-tag" onclick="setPrompt('cozy scandinavian living room with warm lighting')">Cozy Living</button>
-                            <button class="prompt-tag" onclick="setPrompt('professional home gym with equipment')">Home Gym</button>
-                            <button class="prompt-tag" onclick="setPrompt('modern chef kitchen with marble countertops')">Chef Kitchen</button>
-                            <button class="prompt-tag" onclick="setPrompt('outdoor patio with plants and seating')">Outdoor Patio</button>
-                            <button class="prompt-tag" onclick="setPrompt('elegant office with natural lighting')">Home Office</button>
+                            <button class="prompt-tag" onclick="setPrompt('make it lavish luxury bedroom')">Lavish Luxury</button>
+                            <button class="prompt-tag" onclick="setPrompt('convert to modern home office')">Home Office</button>
+                            <button class="prompt-tag" onclick="setPrompt('transform to minimalist zen space')">Minimalist Zen</button>
+                            <button class="prompt-tag" onclick="setPrompt('convert to storage room with shelves')">Storage Room</button>
+                            <button class="prompt-tag" onclick="setPrompt('make it cozy scandinavian living room')">Cozy Living</button>
+                            <button class="prompt-tag" onclick="setPrompt('transform to professional gym')">Home Gym</button>
+                            <button class="prompt-tag" onclick="setPrompt('convert to elegant dining room')">Dining Room</button>
                         </div>
                     </div>
 
                     <div class="mt-3">
                         <div class="section-title">
-                            <i class="fas fa-wand-magic-sparkles"></i> Describe Your Transformation
+                            <i class="fas fa-pencil"></i> Your Transformation Request
                         </div>
-                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Example: Change my bedroom to look like a luxury hotel room with modern furniture, warm lighting, and elegant decor"></textarea>
-                        <small class="text-muted">Be specific about style, colors, furniture, lighting, etc.</small>
+                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Example: Make this bedroom lavish and luxurious with premium furniture and elegant decor"></textarea>
+                        <small class="text-muted">Describe your vision - AI will analyze the room and design accordingly</small>
                     </div>
 
                     <div class="mt-3">
                         <div class="section-title">
-                            <i class="fas fa-clone"></i> Number of Variations
+                            <i class="fas fa-clone"></i> Number of Design Variants
                         </div>
                         <select class="form-select" id="variationsSelect">
-                            <option value="2">2 Variations</option>
-                            <option value="3" selected>3 Variations</option>
-                            <option value="4">4 Variations</option>
+                            <option value="2" selected>2 Variants per image</option>
+                            <option value="3">3 Variants per image</option>
+                            <option value="4">4 Variants per image</option>
                         </select>
                     </div>
 
                     <div class="text-center mt-4">
                         <button class="btn btn-primary" id="transformBtn" onclick="transformImages()">
-                            <i class="fas fa-wand-magic-sparkles"></i> Transform My Space
+                            <i class="fas fa-wand-magic-sparkles"></i> Let AI Architect Transform
                         </button>
                     </div>
                 </div>
 
                 <div id="loadingSection" style="display: none;" class="text-center my-4">
                     <div class="spinner-border text-primary"></div>
-                    <p class="mt-3 mb-1 fw-bold">AI is transforming your space...</p>
-                    <p class="text-muted" style="font-size: 14px;">This may take 30-90 seconds</p>
+                    <p class="mt-3 mb-1 fw-bold">AI Architect is analyzing and transforming...</p>
+                    <p class="text-muted" style="font-size: 14px;">This may take 30-90 seconds per image</p>
                 </div>
 
                 <div id="alertContainer" class="mt-3"></div>
@@ -443,10 +443,10 @@
             <video id="cameraVideo" autoplay playsinline></video>
             <canvas id="canvas"></canvas>
             <div class="camera-controls">
-                <button class="camera-btn capture-btn" onclick="capturePhoto()">
+                <button class="camera-btn capture-btn" id="captureBtn" onclick="capturePhoto()">
                     <i class="fas fa-camera"></i> Capture
                 </button>
-                <button class="camera-btn switch-camera-btn" onclick="switchCamera()" id="switchBtn">
+                <button class="camera-btn switch-camera-btn" onclick="switchCamera()">
                     <i class="fas fa-sync-alt"></i> Switch
                 </button>
                 <button class="camera-btn close-camera-btn" onclick="closeCamera()">
@@ -458,13 +458,13 @@
 
     <script>
         let uploadedImages = [];
-        let selectedModel = 'imagen4';
         let stream = null;
         let currentFacingMode = 'environment';
+        let isCapturing = false;
         
         // IMPORTANT: Replace with your actual Cloud Function URL
         const API_URL = 'YOUR_CLOUD_FUNCTION_URL_HERE';
-        // Example: 'https://ai-decorator-387968496878.asia-south1.run.app'
+        // Example: 'https://your-function-url.cloudfunctions.net/transform_room'
 
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
@@ -474,6 +474,7 @@
         const canvas = document.getElementById('canvas');
         const imageCounter = document.getElementById('imageCounter');
         const counterText = document.getElementById('counterText');
+        const captureBtn = document.getElementById('captureBtn');
 
         fileInput.addEventListener('change', (e) => {
             handleFiles(e.target.files);
@@ -514,6 +515,7 @@
                 cameraVideo.srcObject = stream;
                 cameraModal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
+                isCapturing = false;
             } catch (error) {
                 showAlert('Camera access denied. Please allow camera access.', 'danger');
                 console.error('Camera error:', error);
@@ -529,10 +531,16 @@
         }
 
         function capturePhoto() {
+            // Prevent multiple captures
+            if (isCapturing) return;
+            
             if (uploadedImages.length >= 10) {
                 showAlert('Maximum 10 images reached', 'warning');
                 return;
             }
+
+            isCapturing = true;
+            captureBtn.classList.add('capturing');
 
             const context = canvas.getContext('2d');
             canvas.width = cameraVideo.videoWidth;
@@ -550,6 +558,13 @@
 
             renderPreviews();
             showAlert('Photo captured successfully!', 'success');
+            
+            // Close camera after capture
+            setTimeout(() => {
+                closeCamera();
+                isCapturing = false;
+                captureBtn.classList.remove('capturing');
+            }, 500);
         }
 
         function closeCamera() {
@@ -558,6 +573,8 @@
             }
             cameraModal.style.display = 'none';
             document.body.style.overflow = 'auto';
+            isCapturing = false;
+            captureBtn.classList.remove('capturing');
         }
 
         function renderPreviews() {
@@ -593,12 +610,6 @@
             renderPreviews();
         }
 
-        function selectModel(model) {
-            selectedModel = model;
-            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-model="${model}"]`).classList.add('active');
-        }
-
         function setPrompt(text) {
             document.getElementById('promptInput').value = text;
         }
@@ -608,7 +619,7 @@
             const variations = parseInt(document.getElementById('variationsSelect').value);
 
             if (!prompt) {
-                showAlert('Please enter a transformation prompt', 'warning');
+                showAlert('Please enter your transformation request', 'warning');
                 return;
             }
 
@@ -630,8 +641,7 @@
                     body: JSON.stringify({
                         images: uploadedImages.map(img => img.data),
                         prompt: prompt,
-                        variations: variations,
-                        model: selectedModel
+                        variations: variations
                     })
                 });
 
@@ -642,7 +652,7 @@
                 }
 
                 displayResults(data);
-                showAlert('✨ Transformation completed successfully!', 'success');
+                showAlert('✨ AI Architect completed the transformation!', 'success');
 
             } catch (error) {
                 console.error('Error:', error);
@@ -655,46 +665,72 @@
 
         function displayResults(data) {
             const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '';
+            resultsContainer.innerHTML = '<div class="result-section"></div>';
+            const resultSection = resultsContainer.querySelector('.result-section');
 
             if (data.status === 'success' && data.results) {
                 data.results.forEach((result, index) => {
                     if (result.status === 'success') {
-                        const div = document.createElement('div');
-                        div.className = 'mt-4';
-                        div.innerHTML = `
-                            <div class="original-image-container">
-                                <h5><i class="fas fa-image"></i> ${uploadedImages[index].name}</h5>
-                                <img src="${uploadedImages[index].data}" alt="Original">
+                        const comparisonDiv = document.createElement('div');
+                        comparisonDiv.className = 'comparison-container';
+                        comparisonDiv.innerHTML = `
+                            <div class="comparison-title">
+                                <i class="fas fa-image"></i> Image ${index + 1}: ${uploadedImages[index].name}
                             </div>
-                            <div class="mb-2">
-                                <strong><i class="fas fa-lightbulb"></i> AI Prompt:</strong>
-                                <p class="text-muted mb-2" style="font-size: 13px;">${result.enhanced_prompt}</p>
+
+                            ${result.room_analysis ? `
+                            <div class="analysis-box">
+                                <h6><i class="fas fa-search"></i> AI Room Analysis</h6>
+                                <p>${result.room_analysis.substring(0, 500)}${result.room_analysis.length > 500 ? '...' : ''}</p>
                             </div>
-                            <h6><i class="fas fa-stars"></i> Transformed Results (${result.variations.length} variations):</h6>
-                            <div class="result-grid">
+                            ` : ''}
+
+                            ${result.design_plan ? `
+                            <div class="analysis-box">
+                                <h6><i class="fas fa-pencil-ruler"></i> Design Transformation Plan</h6>
+                                <p>${result.design_plan.substring(0, 500)}${result.design_plan.length > 500 ? '...' : ''}</p>
+                            </div>
+                            ` : ''}
+
+                            <div class="image-comparison">
+                                <div class="image-box">
+                                    <div class="image-label">
+                                        <i class="fas fa-image"></i> ORIGINAL
+                                    </div>
+                                    <img src="${uploadedImages[index].data}" alt="Original">
+                                </div>
+                                
+                                <div class="image-box">
+                                    <div class="image-label">
+                                        <i class="fas fa-wand-magic-sparkles"></i> TRANSFORMED (Variant 1)
+                                    </div>
+                                    <img src="data:image/jpeg;base64,${result.variations[0]}" alt="Transformed">
+                                </div>
+                            </div>
+
+                            <h6 class="mt-3"><i class="fas fa-images"></i> All ${result.variations.length} Design Variants:</h6>
+                            <div class="variations-grid">
                                 ${result.variations.map((imgData, i) => `
-                                    <div class="result-image">
-                                        <img src="data:image/jpeg;base64,${imgData}" alt="Variation ${i + 1}">
-                                        <div class="result-footer">
-                                            <small><strong>Variation ${i + 1}</strong></small>
-                                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${imgData}', 'transformed_${index}_${i}.jpg')">
+                                    <div class="variation-item">
+                                        <img src="data:image/jpeg;base64,${imgData}" alt="Variant ${i + 1}">
+                                        <div class="variation-footer">
+                                            <small><strong>Variant ${i + 1}</strong></small>
+                                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${imgData}', 'transformed_${index + 1}_variant_${i + 1}.jpg')">
                                                 <i class="fas fa-download"></i>
                                             </button>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
-                            <hr class="my-4">
                         `;
-                        resultsContainer.appendChild(div);
+                        resultSection.appendChild(comparisonDiv);
                     } else {
                         const errorDiv = document.createElement('div');
                         errorDiv.className = 'alert alert-warning mt-3';
                         errorDiv.innerHTML = `
                             <strong>Image ${index + 1}:</strong> ${result.message}
                         `;
-                        resultsContainer.appendChild(errorDiv);
+                        resultSection.appendChild(errorDiv);
                     }
                 });
             }
