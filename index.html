@@ -301,25 +301,59 @@
             font-weight: 600;
             color: #667eea;
         }
+        .info-badge {
+            background: #e8f0fe;
+            color: #1967d2;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1967d2;
+        }
+        .original-image-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .original-image-container img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .compare-toggle {
+            background: #34a853;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-magic"></i> AI Room Transformation</h1>
-            <p>Transform any space with AI</p>
+            <p>Upload your space and transform it with AI</p>
         </div>
 
         <div class="card">
             <div class="card-body p-3 p-md-4">
+                <div class="info-badge">
+                    <i class="fas fa-info-circle"></i> Upload your room/space images and describe how you want to transform them. AI will edit your actual images!
+                </div>
+
                 <div class="upload-options">
                     <div class="upload-btn" onclick="openCamera()">
                         <i class="fas fa-camera"></i>
-                        <span>Capture</span>
+                        <span>Capture Photo</span>
                     </div>
                     <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
                         <i class="fas fa-folder-open"></i>
-                        <span>Upload</span>
+                        <span>Upload Images</span>
                     </div>
                 </div>
 
@@ -333,36 +367,50 @@
 
                 <div id="promptSection" style="display: none;">
                     <div class="mt-4">
-                        <div class="section-title">AI Model</div>
+                        <div class="section-title">
+                            <i class="fas fa-robot"></i> Choose AI Model
+                        </div>
                         <div class="model-toggle">
                             <button class="toggle-btn active" data-model="imagen4" onclick="selectModel('imagen4')">
-                                <i class="fas fa-image"></i> Imagen 4
+                                <i class="fas fa-image"></i> Imagen 4 Edit
                             </button>
                             <button class="toggle-btn" data-model="gemini" onclick="selectModel('gemini')">
-                                <i class="fas fa-brain"></i> Gemini Edit
+                                <i class="fas fa-brain"></i> Gemini + Imagen
                             </button>
                         </div>
+                        <small class="text-muted">
+                            <strong>Imagen 4:</strong> Fast, direct editing | 
+                            <strong>Gemini + Imagen:</strong> Analyzes your image first
+                        </small>
                     </div>
 
                     <div class="mt-3">
-                        <div class="section-title">Quick Prompts</div>
+                        <div class="section-title">
+                            <i class="fas fa-tags"></i> Quick Transformation Ideas
+                        </div>
                         <div class="prompt-tags">
-                            <button class="prompt-tag" onclick="setPrompt('modern minimalist office')">Office</button>
-                            <button class="prompt-tag" onclick="setPrompt('luxury bedroom')">Bedroom</button>
-                            <button class="prompt-tag" onclick="setPrompt('cozy living room')">Living</button>
-                            <button class="prompt-tag" onclick="setPrompt('home gym')">Gym</button>
-                            <button class="prompt-tag" onclick="setPrompt('modern kitchen')">Kitchen</button>
-                            <button class="prompt-tag" onclick="setPrompt('outdoor patio')">Patio</button>
+                            <button class="prompt-tag" onclick="setPrompt('transform to modern minimalist design with clean lines')">Modern Minimalist</button>
+                            <button class="prompt-tag" onclick="setPrompt('luxury hotel bedroom with premium furniture')">Luxury Bedroom</button>
+                            <button class="prompt-tag" onclick="setPrompt('cozy scandinavian living room with warm lighting')">Cozy Living</button>
+                            <button class="prompt-tag" onclick="setPrompt('professional home gym with equipment')">Home Gym</button>
+                            <button class="prompt-tag" onclick="setPrompt('modern chef kitchen with marble countertops')">Chef Kitchen</button>
+                            <button class="prompt-tag" onclick="setPrompt('outdoor patio with plants and seating')">Outdoor Patio</button>
+                            <button class="prompt-tag" onclick="setPrompt('elegant office with natural lighting')">Home Office</button>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="section-title">Your Prompt</div>
-                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Describe transformation..."></textarea>
+                        <div class="section-title">
+                            <i class="fas fa-wand-magic-sparkles"></i> Describe Your Transformation
+                        </div>
+                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Example: Change my bedroom to look like a luxury hotel room with modern furniture, warm lighting, and elegant decor"></textarea>
+                        <small class="text-muted">Be specific about style, colors, furniture, lighting, etc.</small>
                     </div>
 
                     <div class="mt-3">
-                        <div class="section-title">Variations</div>
+                        <div class="section-title">
+                            <i class="fas fa-clone"></i> Number of Variations
+                        </div>
                         <select class="form-select" id="variationsSelect">
                             <option value="2">2 Variations</option>
                             <option value="3" selected>3 Variations</option>
@@ -372,15 +420,15 @@
 
                     <div class="text-center mt-4">
                         <button class="btn btn-primary" id="transformBtn" onclick="transformImages()">
-                            <i class="fas fa-wand-magic-sparkles"></i> Transform
+                            <i class="fas fa-wand-magic-sparkles"></i> Transform My Space
                         </button>
                     </div>
                 </div>
 
                 <div id="loadingSection" style="display: none;" class="text-center my-4">
                     <div class="spinner-border text-primary"></div>
-                    <p class="mt-3 mb-1 fw-bold">Transforming...</p>
-                    <p class="text-muted" style="font-size: 14px;">30-60 seconds</p>
+                    <p class="mt-3 mb-1 fw-bold">AI is transforming your space...</p>
+                    <p class="text-muted" style="font-size: 14px;">This may take 30-90 seconds</p>
                 </div>
 
                 <div id="alertContainer" class="mt-3"></div>
@@ -413,7 +461,10 @@
         let selectedModel = 'imagen4';
         let stream = null;
         let currentFacingMode = 'environment';
-        const API_URL = 'https://ai-decorator-387968496878.asia-south1.run.app';
+        
+        // IMPORTANT: Replace with your actual Cloud Function URL
+        const API_URL = 'YOUR_CLOUD_FUNCTION_URL_HERE';
+        // Example: 'https://ai-decorator-387968496878.asia-south1.run.app'
 
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
@@ -430,7 +481,7 @@
 
         function handleFiles(files) {
             if (uploadedImages.length + files.length > 10) {
-                showAlert('Max 10 images', 'warning');
+                showAlert('Maximum 10 images allowed at once', 'warning');
                 return;
             }
 
@@ -452,7 +503,7 @@
 
         async function openCamera() {
             if (uploadedImages.length >= 10) {
-                showAlert('Max 10 images reached', 'warning');
+                showAlert('Maximum 10 images reached', 'warning');
                 return;
             }
 
@@ -464,7 +515,7 @@
                 cameraModal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
             } catch (error) {
-                showAlert('Camera access denied', 'danger');
+                showAlert('Camera access denied. Please allow camera access.', 'danger');
                 console.error('Camera error:', error);
             }
         }
@@ -479,7 +530,7 @@
 
         function capturePhoto() {
             if (uploadedImages.length >= 10) {
-                showAlert('Max 10 images reached', 'warning');
+                showAlert('Maximum 10 images reached', 'warning');
                 return;
             }
 
@@ -498,7 +549,7 @@
             });
 
             renderPreviews();
-            showAlert('Photo captured!', 'success');
+            showAlert('Photo captured successfully!', 'success');
         }
 
         function closeCamera() {
@@ -557,12 +608,12 @@
             const variations = parseInt(document.getElementById('variationsSelect').value);
 
             if (!prompt) {
-                showAlert('Enter a prompt', 'warning');
+                showAlert('Please enter a transformation prompt', 'warning');
                 return;
             }
 
             if (uploadedImages.length === 0) {
-                showAlert('Add images first', 'warning');
+                showAlert('Please upload or capture at least one image', 'warning');
                 return;
             }
 
@@ -587,13 +638,14 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Failed to transform');
+                    throw new Error(data.message || 'Transformation failed');
                 }
 
                 displayResults(data);
-                showAlert('Transformation completed!', 'success');
+                showAlert('✨ Transformation completed successfully!', 'success');
 
             } catch (error) {
+                console.error('Error:', error);
                 showAlert(`Error: ${error.message}`, 'danger');
             } finally {
                 document.getElementById('loadingSection').style.display = 'none';
@@ -611,23 +663,38 @@
                         const div = document.createElement('div');
                         div.className = 'mt-4';
                         div.innerHTML = `
-                            <h5><i class="fas fa-image"></i> ${uploadedImages[index].name}</h5>
-                            <p class="text-muted"><strong>Prompt:</strong> ${result.enhanced_prompt}</p>
+                            <div class="original-image-container">
+                                <h5><i class="fas fa-image"></i> ${uploadedImages[index].name}</h5>
+                                <img src="${uploadedImages[index].data}" alt="Original">
+                            </div>
+                            <div class="mb-2">
+                                <strong><i class="fas fa-lightbulb"></i> AI Prompt:</strong>
+                                <p class="text-muted mb-2" style="font-size: 13px;">${result.enhanced_prompt}</p>
+                            </div>
+                            <h6><i class="fas fa-stars"></i> Transformed Results (${result.variations.length} variations):</h6>
                             <div class="result-grid">
                                 ${result.variations.map((imgData, i) => `
                                     <div class="result-image">
                                         <img src="data:image/jpeg;base64,${imgData}" alt="Variation ${i + 1}">
                                         <div class="result-footer">
-                                            <small>Variation ${i + 1}</small>
-                                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${imgData}', 'result_${index}_${i}.jpg')">
+                                            <small><strong>Variation ${i + 1}</strong></small>
+                                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${imgData}', 'transformed_${index}_${i}.jpg')">
                                                 <i class="fas fa-download"></i>
                                             </button>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
+                            <hr class="my-4">
                         `;
                         resultsContainer.appendChild(div);
+                    } else {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-warning mt-3';
+                        errorDiv.innerHTML = `
+                            <strong>Image ${index + 1}:</strong> ${result.message}
+                        `;
+                        resultsContainer.appendChild(errorDiv);
                     }
                 });
             }
