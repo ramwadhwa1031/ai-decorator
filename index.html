@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Room Transformation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.95;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: white;
+            border: none;
+        }
+        .upload-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .upload-btn {
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #667eea;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .upload-btn:hover {
+            background: rgba(102,126,234,0.1);
+            transform: translateY(-2px);
+        }
+        .upload-btn i {
+            font-size: 2rem;
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .upload-btn span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .camera-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 10px;
+        }
+        .camera-content {
+            max-width: 600px;
+            margin: 20px auto;
+            position: relative;
+        }
+        #cameraVideo {
+            width: 100%;
+            border-radius: 15px;
+            background: #000;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .camera-btn {
+            padding: 12px 25px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .capture-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 120px;
+        }
+        .close-camera-btn {
+            background: #ea4335;
+            color: white;
+        }
+        .switch-camera-btn {
+            background: #34a853;
+            color: white;
+        }
+        canvas {
+            display: none;
+        }
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        @media (min-width: 576px) {
+            .preview-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        .preview-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        @media (min-width: 576px) {
+            .preview-item img {
+                height: 150px;
+            }
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(234, 67, 53, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .camera-badge {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(52, 168, 83, 0.9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .model-toggle {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        .toggle-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: 2px solid #667eea;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        .prompt-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .prompt-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+        .prompt-tag:active {
+            transform: scale(0.95);
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            font-size: 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        @media (min-width: 576px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 992px) {
+            .result-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .result-image {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: white;
+        }
+        .result-image img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        @media (min-width: 768px) {
+            .result-image img {
+                height: 300px;
+            }
+        }
+        .result-footer {
+            padding: 12px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3rem;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .image-counter {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: 600;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-magic"></i> AI Room Transformation</h1>
+            <p>Transform any space with AI</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body p-3 p-md-4">
+                <div class="upload-options">
+                    <div class="upload-btn" onclick="openCamera()">
+                        <i class="fas fa-camera"></i>
+                        <span>Capture</span>
+                    </div>
+                    <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Upload</span>
+                    </div>
+                </div>
+
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+
+                <div id="imageCounter" class="image-counter" style="display: none;">
+                    <span id="counterText">0 images selected</span>
+                </div>
+
+                <div id="previewContainer" class="preview-container" style="display: none;"></div>
+
+                <div id="promptSection" style="display: none;">
+                    <div class="mt-4">
+                        <div class="section-title">AI Model</div>
+                        <div class="model-toggle">
+                            <button class="toggle-btn active" data-model="imagen4" onclick="selectModel('imagen4')">
+                                <i class="fas fa-image"></i> Imagen 4
+                            </button>
+                            <button class="toggle-btn" data-model="gemini" onclick="selectModel('gemini')">
+                                <i class="fas fa-brain"></i> Gemini Edit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="section-title">Quick Prompts</div>
+                        <div class="prompt-tags">
+                            <button class="prompt-tag" onclick="setPrompt('modern minimalist office')">Office</button>
+                            <button class="prompt-tag" onclick="setPrompt('luxury bedroom')">Bedroom</button>
+                            <button class="prompt-tag" onclick="setPrompt('cozy living room')">Living</button>
+                            <button class="prompt-tag" onclick="setPrompt('home gym')">Gym</button>
+                            <button class="prompt-tag" onclick="setPrompt('modern kitchen')">Kitchen</button>
+                            <button class="prompt-tag" onclick="setPrompt('outdoor patio')">Patio</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="section-title">Your Prompt</div>
+                        <textarea class="form-control" id="promptInput" rows="3" placeholder="Describe transformation..."></textarea>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="section-title">Variations</div>
+                        <select class="form-select" id="variationsSelect">
+                            <option value="2">2 Variations</option>
+                            <option value="3" selected>3 Variations</option>
+                            <option value="4">4 Variations</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" id="transformBtn" onclick="transformImages()">
+                            <i class="fas fa-wand-magic-sparkles"></i> Transform
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loadingSection" style="display: none;" class="text-center my-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-3 mb-1 fw-bold">Transforming...</p>
+                    <p class="text-muted" style="font-size: 14px;">30-60 seconds</p>
+                </div>
+
+                <div id="alertContainer" class="mt-3"></div>
+                <div id="resultsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="camera-modal">
+        <div class="camera-content">
+            <video id="cameraVideo" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="camera-controls">
+                <button class="camera-btn capture-btn" onclick="capturePhoto()">
+                    <i class="fas fa-camera"></i> Capture
+                </button>
+                <button class="camera-btn switch-camera-btn" onclick="switchCamera()" id="switchBtn">
+                    <i class="fas fa-sync-alt"></i> Switch
+                </button>
+                <button class="camera-btn close-camera-btn" onclick="closeCamera()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedImages = [];
+        let selectedModel = 'imagen4';
+        let stream = null;
+        let currentFacingMode = 'environment';
+        const API_URL = 'https://ai-decorator-387968496878.asia-south1.run.app';
+
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const promptSection = document.getElementById('promptSection');
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraVideo = document.getElementById('cameraVideo');
+        const canvas = document.getElementById('canvas');
+        const imageCounter = document.getElementById('imageCounter');
+        const counterText = document.getElementById('counterText');
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            if (uploadedImages.length + files.length > 10) {
+                showAlert('Max 10 images', 'warning');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImages.push({
+                        data: e.target.result,
+                        name: file.name,
+                        type: 'upload'
+                    });
+                    renderPreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function openCamera() {
+            if (uploadedImages.length >= 10) {
+                showAlert('Max 10 images reached', 'warning');
+                return;
+            }
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode }
+                });
+                cameraVideo.srcObject = stream;
+                cameraModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            } catch (error) {
+                showAlert('Camera access denied', 'danger');
+                console.error('Camera error:', error);
+            }
+        }
+
+        async function switchCamera() {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            await openCamera();
+        }
+
+        function capturePhoto() {
+            if (uploadedImages.length >= 10) {
+                showAlert('Max 10 images reached', 'warning');
+                return;
+            }
+
+            const context = canvas.getContext('2d');
+            canvas.width = cameraVideo.videoWidth;
+            canvas.height = cameraVideo.videoHeight;
+            context.drawImage(cameraVideo, 0, 0);
+
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            const timestamp = new Date().getTime();
+
+            uploadedImages.push({
+                data: imageData,
+                name: `capture_${timestamp}.jpg`,
+                type: 'camera'
+            });
+
+            renderPreviews();
+            showAlert('Photo captured!', 'success');
+        }
+
+        function closeCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            cameraModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderPreviews() {
+            if (uploadedImages.length === 0) {
+                previewContainer.style.display = 'none';
+                promptSection.style.display = 'none';
+                imageCounter.style.display = 'none';
+                return;
+            }
+
+            previewContainer.style.display = 'grid';
+            promptSection.style.display = 'block';
+            imageCounter.style.display = 'block';
+            counterText.textContent = `${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''} selected`;
+            previewContainer.innerHTML = '';
+
+            uploadedImages.forEach((img, index) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${img.data}" alt="${img.name}">
+                    ${img.type === 'camera' ? '<div class="camera-badge"><i class="fas fa-camera"></i></div>' : ''}
+                    <button class="delete-btn" onclick="deleteImage(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previewContainer.appendChild(div);
+            });
+        }
+
+        function deleteImage(index) {
+            uploadedImages.splice(index, 1);
+            renderPreviews();
+        }
+
+        function selectModel(model) {
+            selectedModel = model;
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-model="${model}"]`).classList.add('active');
+        }
+
+        function setPrompt(text) {
+            document.getElementById('promptInput').value = text;
+        }
+
+        async function transformImages() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            const variations = parseInt(document.getElementById('variationsSelect').value);
+
+            if (!prompt) {
+                showAlert('Enter a prompt', 'warning');
+                return;
+            }
+
+            if (uploadedImages.length === 0) {
+                showAlert('Add images first', 'warning');
+                return;
+            }
+
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultsContainer').innerHTML = '';
+            document.getElementById('transformBtn').disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        images: uploadedImages.map(img => img.data),
+                        prompt: prompt,
+                        variations: variations,
+                        model: selectedModel
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to transform');
+                }
+
+                displayResults(data);
+                showAlert('Transformation completed!', 'success');
+
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            } finally {
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('transformBtn').disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '';
+
+            if (data.status === 'success' && data.results) {
+                data.results.forEach((result, index) => {
+                    if (result.status === 'success') {
+                        const div = document.createElement('div');
+                        div.className = 'mt-4';
+                        div.innerHTML = `
+                            <h5><i class="fas fa-image"></i> ${uploadedImages[index].name}</h5>
+                            <p class="text-muted"><strong>Prompt:</strong> ${result.enhanced_prompt}</p>
+                            <div class="result-grid">
+                                ${result.variations.map((imgData, i) => `
+                                    <div class="result-image">
+                                        <img src="data:image/jpeg;base64,${imgData}" alt="Variation ${i + 1}">
+                                        <div class="result-footer">
+                                            <small>Variation ${i + 1}</small>
+                                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${imgData}', 'result_${index}_${i}.jpg')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        resultsContainer.appendChild(div);
+                    }
+                });
+            }
+        }
+
+        function downloadImage(base64Data, filename) {
+            const link = document.createElement('a');
+            link.href = `data:image/jpeg;base64,${base64Data}`;
+            link.download = filename;
+            link.click();
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
