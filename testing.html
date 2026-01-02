@@ -278,28 +278,13 @@
         }
 
         .analysis-box {
-            background: linear-gradient(135deg, #f8faff 0%, #faf8ff 100%);
+            background: white;
             border-left: 4px solid #667eea;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
             font-size: 14px;
-            line-height: 1.8;
-            color: #444;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-        }
-
-        .analysis-box strong {
-            color: #667eea;
-            font-size: 16px;
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .analysis-box p {
-            margin: 8px 0;
-            color: #555;
+            color: #666;
         }
 
         .comparison {
@@ -700,53 +685,51 @@
         }
 
         function displayResults(data) {
-            const container = document.getElementById('results');
-            
-            if (data.status === 'success' && data.results) {
-                data.results.forEach((result, i) => {
-                    if (result.status === 'success') {
-                        container.innerHTML += `
-                            <div class="result-card">
-                                <div class="result-header">📸 Image ${i + 1}: ${images[i].name}</div>
-                                
-                                ${result.room_analysis ? `
-                                    <div class="analysis-box">
-                                        <strong>🔍 AI Room Analysis</strong>
-                                        <p>${formatAnalysis(result.room_analysis)}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                <div class="comparison">
-                                    <div class="image-box">
-                                        <div class="image-label">ORIGINAL</div>
-                                        <img src="${images[i].data}" alt="Original">
-                                    </div>
-                                    <div class="image-box">
-                                        <div class="image-label">TRANSFORMED</div>
-                                        <img src="data:image/jpeg;base64,${result.variations[0]}" alt="Transformed">
-                                    </div>
-                                </div>
-                                
-                                <h4 style="margin: 20px 0 15px; color: #333;">All ${result.variations.length} Variants:</h4>
-                                <div class="variants-grid">
-                                    ${result.variations.map((v, j) => `
-                                        <div class="variant-card">
-                                            <img src="data:image/jpeg;base64,${v}" alt="Variant ${j+1}">
-                                            <div class="variant-footer">
-                                                <strong>Variant ${j+1}</strong>
-                                                <button class="download-btn" onclick="download('${v}', 'transformed_${i+1}_v${j+1}.jpg')">
-                                                    ⬇️ Download
-                                                </button>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-            }
-        }
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+
+    if (data.status !== 'success') {
+        showAlert("Server returned error", "error");
+        return;
+    }
+
+    data.results.forEach((result, i) => {
+        container.innerHTML += `
+        <div class="result-card">
+            <div class="result-header">📸 Image ${i + 1}: ${images[i].name}</div>
+
+            <div class="analysis-box">
+                <strong style="color:#667eea">AI Design Prompt:</strong><br>
+                ${result.design_plan}
+            </div>
+
+            <div class="comparison">
+                <div class="image-box">
+                    <div class="image-label">ORIGINAL</div>
+                    <img src="${images[i].data}">
+                </div>
+                <div class="image-box">
+                    <div class="image-label">TRANSFORMED</div>
+                    <img src="data:image/jpeg;base64,${result.variants[0]}">
+                </div>
+            </div>
+
+            <h4 style="margin:15px 0">All Variants</h4>
+            <div class="variants-grid">
+                ${result.variants.map((v,j)=>`
+                    <div class="variant-card">
+                        <img src="data:image/jpeg;base64,${v}">
+                        <div class="variant-footer">
+                            Variant ${j+1}
+                            <button class="download-btn" onclick="download('${v}','design_${i+1}_${j+1}.jpg')">⬇️</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    });
+}
+
 
         function download(base64, filename) {
             const link = document.createElement('a');
@@ -759,16 +742,6 @@
             const container = document.getElementById('alertContainer');
             container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
             setTimeout(() => container.innerHTML = '', 4000);
-        }
-
-        function formatAnalysis(text) {
-            // Clean up and format the analysis text
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
-                .replace(/\n\n/g, '</p><p>') // Paragraph breaks
-                .replace(/\n/g, '<br>') // Line breaks
-                .replace(/(\d+\.)/g, '<br><strong>$1</strong>') // Number lists
-                .trim();
         }
     </script>
 </body>

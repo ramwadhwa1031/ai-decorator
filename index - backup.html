@@ -278,28 +278,13 @@
         }
 
         .analysis-box {
-            background: linear-gradient(135deg, #f8faff 0%, #faf8ff 100%);
+            background: white;
             border-left: 4px solid #667eea;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
             font-size: 14px;
-            line-height: 1.8;
-            color: #444;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-        }
-
-        .analysis-box strong {
-            color: #667eea;
-            font-size: 16px;
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .analysis-box p {
-            margin: 8px 0;
-            color: #555;
+            color: #666;
         }
 
         .comparison {
@@ -711,8 +696,8 @@
                                 
                                 ${result.room_analysis ? `
                                     <div class="analysis-box">
-                                        <strong>🔍 AI Room Analysis</strong>
-                                        <p>${formatAnalysis(result.room_analysis)}</p>
+                                        <strong style="color: #667eea;">🔍 AI Analysis:</strong><br>
+                                        ${result.room_analysis}
                                     </div>
                                 ` : ''}
                                 
@@ -759,16 +744,6 @@
             const container = document.getElementById('alertContainer');
             container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
             setTimeout(() => container.innerHTML = '', 4000);
-        }
-
-        function formatAnalysis(text) {
-            // Clean up and format the analysis text
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
-                .replace(/\n\n/g, '</p><p>') // Paragraph breaks
-                .replace(/\n/g, '<br>') // Line breaks
-                .replace(/(\d+\.)/g, '<br><strong>$1</strong>') // Number lists
-                .trim();
         }
     </script>
 </body>
